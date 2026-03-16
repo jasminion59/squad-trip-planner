@@ -863,7 +863,21 @@ List each unique place name on its own line, one per activity, like:
 Be specific with real place names in ${dest}. Mix activities to satisfy everyone's interests. Keep descriptions concise (1-2 sentences each).`;
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/generate", {
+```
+And **remove** the `"x-api-key"` header line entirely — the backend handles that now.
+
+### Step 5: Commit everything
+Push both changes to GitHub — Vercel will auto-redeploy within seconds.
+
+---
+
+## Why this works
+```
+Browser → your /api/generate (on Vercel) → Anthropic API
+                ↑
+        API key lives here safely,
+        hidden from the public
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
