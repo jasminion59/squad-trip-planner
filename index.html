@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SQUAD TRIP — Group Travel Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0e0c08;
+    --paper: #f5f0e8;
+    --cream: #ede8db;
+    --rust: #c1440e;
+    --gold: #d4a847;
+    --forest: #2a4a35;
+    --mist: #8a9ba8;
+    --white: #fdfaf4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid var(--rust);
+  }
+
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 2rem;
+    border-bottom: 1px solid rgba(245,240,232,0.15);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+
+  .masthead-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5.5rem;
+    line-height: 0.85;
+    letter-spacing: 0.04em;
+    color: var(--paper);
+    padding: 1.5rem 2rem 0.5rem;
+    position: relative;
+  }
+
+  .masthead-logo span {
+    color: var(--rust);
+  }
+
+  .masthead-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold);
+    padding-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .masthead-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 2rem;
+    background: var(--rust);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--paper);
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── STEP PROGRESS ── */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    border: 1.5px solid var(--ink);
+  }
+
+  .progress-step {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--mist);
+    background: var(--cream);
+    border-right: 1.5px solid var(--ink);
+    transition: all 0.2s;
+  }
+
+  .progress-step:last-child { border-right: none; }
+
+  .progress-step.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .progress-step.done {
+    background: var(--forest);
+    color: var(--paper);
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-kicker {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.6rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  /* ── INPUTS ── */
+  .field-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .field-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--white);
+    border: 1.5px solid var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--rust);
+    background: #fff;
+  }
+
+  input[type="text"]::placeholder { color: var(--mist); }
+
+  /* ── DAYS SLIDER ── */
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--white);
+    border: 1.5px solid var(--ink);
+    padding: 14px 18px;
+  }
+
+  .slider-wrap label { font-size: 13px; color: var(--mist); white-space: nowrap; }
+
+  input[type="range"] {
+    flex: 1;
+    height: 3px;
+    accent-color: var(--rust);
+    cursor: pointer;
+  }
+
+  .days-pill {
+    background: var(--rust);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    padding: 0 14px;
+    letter-spacing: 0.05em;
+    min-width: 60px;
+    text-align: center;
+    line-height: 2rem;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .cta-btn:hover { background: var(--rust); }
+  .cta-btn:active { transform: scale(0.99); }
+  .cta-btn:disabled { background: var(--mist); cursor: not-allowed; }
+
+  .cta-btn.forest { background: var(--forest); }
+  .cta-btn.forest:hover { background: #1e3628; }
+
+  /* ── FRIENDS GRID ── */
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .friend-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px 10px;
+    background: var(--white);
+    border: 1.5px solid var(--cream);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .friend-chip:hover { border-color: var(--ink); }
+
+  .friend-chip.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .friend-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── INTEREST TAGS ── */
+  .interest-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag {
+    padding: 5px 13px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    border: 1.5px solid rgba(14,12,8,0.25);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--ink);
+    transition: all 0.12s;
+    font-weight: 400;
+  }
+
+  .tag:hover { border-color: var(--ink); }
+
+  .tag.active {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  /* ── FRIEND INTEREST ROWS ── */
+  .friend-block {
+    border-top: 1.5px solid var(--ink);
+    padding: 1.25rem 0;
+  }
+
+  .friend-block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0.75rem;
+  }
+
+  .friend-block-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+  }
+
+  .custom-row {
+    display: flex; gap: 6px; margin-top: 0.5rem;
+  }
+
+  .custom-row input {
+    flex: 1;
+    padding: 7px 12px;
+    font-size: 12px;
+    border: 1.5px solid rgba(14,12,8,0.25);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .custom-row input:focus { border-color: var(--rust); }
+
+  .custom-row button {
+    padding: 7px 14px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .custom-row button:hover { background: var(--rust); }
+
+  .custom-chips {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
+  }
+
+  .custom-chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: var(--forest);
+    color: var(--paper);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── SUMMARY CARD ── */
+  .summary-card {
+    background: var(--white);
+    border: 1.5px solid var(--ink);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; right: -6px; bottom: -6px;
+    background: var(--ink);
+    z-index: -1;
+  }
+
+  .summary-dest {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
+    color: var(--rust);
+    margin-bottom: 0.25rem;
+  }
+
+  .summary-meta { font-size: 13px; color: var(--mist); margin-bottom: 1rem; }
+
+  .summary-interest-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--cream);
+    font-size: 13px;
+  }
+
+  .summary-interest-row:last-child { border-bottom: none; }
+
+  .summary-friend-name {
+    font-weight: 500;
+    min-width: 70px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+
+  .mini-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .mini-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: var(--cream);
+    color: var(--ink);
+    border: 0.5px solid rgba(14,12,8,0.2);
+  }
+
+  /* ── ITINERARY OUTPUT ── */
+  .itinerary-section {
+    margin-top: 2.5rem;
+  }
+
+  .day-block {
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--rust);
+    padding-left: 1.25rem;
+  }
+
+  .day-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--rust);
+    margin-bottom: 0.75rem;
+  }
+
+  .activity-row {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--cream);
+    font-size: 14px;
+    line-height: 1.5;
+    align-items: flex-start;
+  }
+
+  .activity-row:last-child { border-bottom: none; }
+
+  .time-stamp {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* ── MAP SECTION ── */
+  .map-section {
+    margin-top: 2rem;
+    border: 1.5px solid var(--ink);
+  }
+
+  .map-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 18px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .map-header span { font-size: 11px; font-family: 'DM Sans', sans-serif; color: var(--mist); letter-spacing: 0.08em; }
+
+  #map-frame {
+    width: 100%;
+    height: 380px;
+    border: none;
+    background: var(--cream);
+  }
+
+  .map-pins {
+    padding: 12px 18px;
+    background: var(--white);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-top: 1px solid var(--cream);
+  }
+
+  .map-pin {
+    font-size: 12px;
+    padding: 4px 12px;
+    background: var(--cream);
+    border: 1px solid rgba(14,12,8,0.2);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .map-pin:hover { background: var(--rust); color: var(--paper); border-color: var(--rust); }
+
+  /* ── LOADING ── */
+  .loading-area {
+    text-align: center;
+    padding: 3rem 1rem;
+    border: 1.5px dashed var(--ink);
+    margin-top: 1.5rem;
+  }
+
+  .loading-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    color: var(--rust);
+    margin-bottom: 0.5rem;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .loading-sub { font-size: 13px; color: var(--mist); }
+
+  /* ── ERROR ── */
+  .error-box {
+    background: #fff0ec;
+    border: 1.5px solid var(--rust);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--rust);
+    margin-top: 1rem;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1.5px solid var(--ink);
+    margin: 2rem 0;
+  }
+
+  .add-friend-btn {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1.5px dashed rgba(14,12,8,0.3);
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--mist);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .add-friend-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .back-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .back-btn:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span>Est. 2025</span>
+    <span>The Group Travel Planner</span>
+    <span>AI-Powered</span>
+  </div>
+  <div class="masthead-logo">SQUAD<span>TRIP</span></div>
+  <p class="masthead-tagline">Every person, every interest — one perfect adventure</p>
+  <div class="masthead-rule">
+    <span>Destination</span>
+    <span>✦</span>
+    <span>Interests</span>
+    <span>✦</span>
+    <span>Itinerary</span>
+    <span>✦</span>
+    <span>Map</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- PROGRESS -->
+  <div class="progress-bar">
+    <div class="progress-step active" id="ps1">01 — The Destination</div>
+    <div class="progress-step" id="ps2">02 — The Crew</div>
+    <div class="progress-step" id="ps3">03 — The Plan</div>
+  </div>
+
+  <!-- ══ STEP 1 ══ -->
+  <div id="step1">
+    <p class="section-kicker">Step 01</p>
+    <h2 class="section-title">Where are we headed?</h2>
+
+    <div class="field-group">
+      <label class="field-label" for="dest-input">Destination city</label>
+      <input type="text" id="dest-input" placeholder="e.g. New Orleans, Louisiana" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Trip length</label>
+      <div class="slider-wrap">
+        <label>1 day</label>
+        <input type="range" min="1" max="7" step="1" value="3" id="days-slider" />
+        <label>7 days</label>
+        <div class="days-pill"><span id="days-val">3</span>D</div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="goStep2()">Next → Assemble the crew</button>
+  </div>
+
+  <!-- ══ STEP 2 ══ -->
+  <div id="step2" style="display:none">
+    <button class="back-btn" onclick="goBack(1)">← Back</button>
+    <p class="section-kicker">Step 02</p>
+    <h2 class="section-title">Who's coming?</h2>
+
+    <div class="friends-grid" id="friends-grid"></div>
+    <button class="add-friend-btn" onclick="addFriend()" style="margin-bottom:2rem">+ Add someone</button>
+
+    <hr class="divider" />
+
+    <p class="section-kicker">Interests — select all that apply</p>
+    <div id="friend-interest-blocks"></div>
+
+    <button class="cta-btn forest" onclick="goStep3()" style="margin-top:1.5rem">Next → Review & generate the plan</button>
+  </div>
+
+  <!-- ══ STEP 3 ══ -->
+  <div id="step3" style="display:none">
+    <button class="back-btn" onclick="goBack(2)">← Back</button>
+    <p class="section-kicker">Step 03</p>
+    <h2 class="section-title">Your trip at a glance</h2>
+
+    <div class="summary-card">
+      <div class="summary-dest" id="sum-dest"></div>
+      <div class="summary-meta" id="sum-meta"></div>
+      <div id="sum-interests"></div>
+    </div>
+
+    <button class="cta-btn" onclick="generate()" id="gen-btn">✦ Generate our itinerary + map</button>
+
+    <div id="output"></div>
+  </div>
+
+</div>
+
+<script>
+const INTEREST_LIST = [
+  "food & dining","craft cocktails","coffee & cafes","nightlife","hiking & trails",
+  "museums","art galleries","live music","shopping","beaches","architecture",
+  "history & heritage","sports events","spa & wellness","street food","local markets",
+  "photography spots","nature walks","hidden gems","rooftop bars","vintage shops","breweries"
+];
+
+const PALETTES = [
+  { bg:"#c1440e", text:"#fdf9f2" },
+  { bg:"#2a4a35", text:"#fdf9f2" },
+  { bg:"#d4a847", text:"#0e0c08" },
+  { bg:"#8a9ba8", text:"#0e0c08" },
+  { bg:"#0e0c08", text:"#f5f0e8" },
+  { bg:"#7a3b2e", text:"#fdf9f2" },
+];
+
+let friends = [
+  { name:"You", initials:"ME", ...PALETTES[0], selected:true, interests:[] },
+  { name:"Alex", initials:"AL", ...PALETTES[1], selected:true, interests:[] },
+  { name:"Sam", initials:"SA", ...PALETTES[2], selected:true, interests:[] },
+  { name:"Jordan", initials:"JO", ...PALETTES[3], selected:true, interests:[] },
+];
+
+/* ── SLIDER ── */
+document.getElementById('days-slider').addEventListener('input', function() {
+  document.getElementById('days-val').textContent = this.value;
+});
+
+/* ── NAVIGATION ── */
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('step'+i).style.display = i===n ? 'block' : 'none';
+    const ps = document.getElementById('ps'+i);
+    ps.className = 'progress-step' + (i < n ? ' done' : (i===n ? ' active' : ''));
+  });
+}
+
+function goStep2() {
+  const dest = document.getElementById('dest-input').value.trim();
+  if (!dest) { document.getElementById('dest-input').focus(); return; }
+  setStep(2);
+  renderFriends();
+}
+
+function goStep3() {
+  if (!friends.some(f=>f.selected)) return;
+  setStep(3);
+  renderSummary();
+}
+
+function goBack(n) { setStep(n); }
+
+/* ── FRIENDS ── */
+function renderFriends() {
+  document.getElementById('friends-grid').innerHTML = friends.map((f,i) => `
+    <div class="friend-chip ${f.selected?'selected':''}" onclick="toggleFriend(${i})">
+      <div class="friend-avatar" style="background:${f.bg};color:${f.text}">${f.initials}</div>
+      ${f.name}
+    </div>
+  `).join('');
+  renderInterestBlocks();
+}
+
+function toggleFriend(i) {
+  friends[i].selected = !friends[i].selected;
+  renderFriends();
+}
+
+function addFriend() {
+  const name = prompt('Friend\'s name:');
+  if (!name || !name.trim()) return;
+  const n = name.trim();
+  const pal = PALETTES[friends.length % PALETTES.length];
+  friends.push({ name:n, initials:n.slice(0,2).toUpperCase(), ...pal, selected:true, interests:[] });
+  renderFriends();
+}
+
+/* ── INTEREST BLOCKS ── */
+function renderInterestBlocks() {
+  const sel = friends.filter(f=>f.selected);
+  if (!sel.length) { document.getElementById('friend-interest-blocks').innerHTML = ''; return; }
+  document.getElementById('friend-interest-blocks').innerHTML = sel.map(f => {
+    const fi = friends.indexOf(f);
+    const customs = f.interests.filter(i => !INTEREST_LIST.includes(i));
+    return `
+      <div class="friend-block">
+        <div class="friend-block-header">
+          <div class="friend-avatar" style="background:${f.bg};color:${f.text};width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${f.initials}</div>
+          <div class="friend-block-name">${f.name}</div>
+        </div>
+        <div class="interest-tags">
+          ${INTEREST_LIST.map(int => `
+            <span class="tag ${f.interests.includes(int)?'active':''}" onclick="toggleInterest(${fi},'${int}')">${int}</span>
+          `).join('')}
+        </div>
+        <div class="custom-row">
+          <input type="text" id="ci-${fi}" placeholder="Type a custom interest..." onkeydown="if(event.key==='Enter')addCustomInterest(${fi})" />
+          <button onclick="addCustomInterest(${fi})">+ Add</button>
+        </div>
+        ${customs.length ? `<div class="custom-chips">${customs.map(c=>`<span class="custom-chip">${c}</span>`).join('')}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleInterest(fi, interest) {
+  const arr = friends[fi].interests;
+  const idx = arr.indexOf(interest);
+  if (idx===-1) arr.push(interest);
+  else arr.splice(idx,1);
+  renderInterestBlocks();
+}
+
+function addCustomInterest(fi) {
+  const inp = document.getElementById('ci-'+fi);
+  const val = inp.value.trim();
+  if (val && !friends[fi].interests.includes(val)) {
+    friends[fi].interests.push(val);
+    inp.value = '';
+    renderInterestBlocks();
+  }
+}
+
+/* ── SUMMARY ── */
+function renderSummary() {
+  const dest = document.getElementById('dest-input').value.trim();
+  const days = document.getElementById('days-slider').value;
+  const sel = friends.filter(f=>f.selected);
+  document.getElementById('sum-dest').textContent = dest.toUpperCase();
+  document.getElementById('sum-meta').textContent = days + ' day' + (days>1?'s':'') + ' · ' + sel.length + ' traveler' + (sel.length>1?'s':'');
+  document.getElementById('sum-interests').innerHTML = sel.map(f => `
+    <div class="summary-interest-row">
+      <div class="friend-avatar" style="background:${f.bg};color:${f.text};width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${f.initials}</div>
+      <span class="summary-friend-name">${f.name}</span>
+      <div class="mini-tags">${f.interests.length ? f.interests.map(i=>`<span class="mini-tag">${i}</span>`).join('') : '<span style="color:#8a9ba8;font-size:12px">No preferences set</span>'}</div>
+    </div>
+  `).join('');
+  document.getElementById('output').innerHTML = '';
+}
+
+/* ── GENERATE ── */
+async function generate() {
+  const dest = document.getElementById('dest-input').value.trim();
+  const days = parseInt(document.getElementById('days-slider').value);
+  const sel = friends.filter(f=>f.selected);
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = 'Crafting your adventure...';
+
+  document.getElementById('output').innerHTML = `
+    <div class="loading-area">
+      <div class="loading-headline">Planning Your Trip...</div>
+      <div class="loading-sub">Finding the best spots in ${dest} for your crew</div>
+    </div>`;
+
+  const interestSummary = sel.map(f =>
+    `${f.name}: ${f.interests.length ? f.interests.join(', ') : 'open to anything'}`
+  ).join('\n');
+
+  const prompt = `You are an expert travel planner. Create a detailed ${days}-day itinerary for a group trip to ${dest}.
+
+Group interests:
+${interestSummary}
+
+IMPORTANT — format your response EXACTLY like this example:
+
+DAY 1: Arrival & First Impressions
+
+[Morning] Café Du Monde — Kick off with beignets and chicory coffee at this iconic open-air café. Perfect for everyone.
+[Afternoon] French Quarter Walking Tour — Explore stunning Creole architecture and soaking up the history.
+[Evening] Frenchmen Street — Live jazz spills out of every door; great for music lovers.
+[Night] Bourbon Street — Nightlife central for the group to wind down.
+
+DAY 2: Title Here
+
+[Morning] Activity name — Description here.
+...
+
+After the full itinerary, add a section called:
+
+MAP SPOTS:
+List each unique place name on its own line, one per activity, like:
+- Café Du Monde
+- French Quarter
+- Frenchmen Street
+(etc.)
+
+Be specific with real place names in ${dest}. Mix activities to satisfy everyone's interests. Keep descriptions concise (1-2 sentences each).`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        messages: [{ role:"user", content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = (data.content||[]).map(b=>b.text||'').join('');
+    if (!text) throw new Error('empty');
+    renderOutput(text, dest, days);
+  } catch(e) {
+    document.getElementById('output').innerHTML = `<div class="error-box">Something went wrong — please try again!</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↺ Regenerate itinerary';
+}
+
+/* ── RENDER OUTPUT ── */
+function renderOutput(text, dest, days) {
+  const parts = text.split('MAP SPOTS:');
+  const itineraryText = parts[0];
+  const mapText = parts[1] || '';
+
+  // Parse map spots
+  const spots = mapText.split('\n')
+    .map(l => l.replace(/^[-•*]\s*/, '').trim())
+    .filter(l => l.length > 2 && l.length < 80);
+
+  // Parse itinerary
+  const lines = itineraryText.split('\n').map(l=>l.trim()).filter(Boolean);
+  let html = '';
+  let inDay = false;
+  let dayHTML = '';
+
+  for (const line of lines) {
+    const dayMatch = line.match(/^DAY\s+(\d+)\s*[:\-–]?\s*(.*)/i);
+    if (dayMatch) {
+      if (inDay) html += `<div class="day-block">${dayHTML}</div>`;
+      dayHTML = `<div class="day-label">Day ${dayMatch[1]}${dayMatch[2] ? ' — ' + dayMatch[2] : ''}</div>`;
+      inDay = true;
+    } else if (inDay) {
+      const timeMatch = line.match(/^\[([^\]]+)\]\s*(.*)/);
+      if (timeMatch) {
+        dayHTML += `<div class="activity-row"><span class="time-stamp">${timeMatch[1]}</span><span>${timeMatch[2]}</span></div>`;
+      } else if (line.length > 3) {
+        dayHTML += `<div class="activity-row"><span>${line}</span></div>`;
+      }
+    }
+  }
+  if (inDay) html += `<div class="day-block">${dayHTML}</div>`;
+
+  // Map embed URL
+  const mapQuery = encodeURIComponent(dest + ' points of interest');
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${mapQuery}&output=embed&z=13`;
+
+  // Map pins HTML
+  const pinsHTML = spots.slice(0,18).map(s =>
+    `<span class="map-pin" onclick="focusMapPin('${encodeURIComponent(s+', '+dest)}')" title="View on map">${s}</span>`
+  ).join('');
+
+  document.getElementById('output').innerHTML = `
+    <div class="itinerary-section">
+      <p class="section-kicker" style="margin-top:2rem">Your day-by-day itinerary</p>
+      <h2 class="section-title" style="font-size:2rem">${dest.toUpperCase()}</h2>
+      ${html}
+    </div>
+
+    <div class="map-section">
+      <div class="map-header">
+        <span>✦ Trip Map — ${dest}</span>
+        <span>Click a pin to zoom in</span>
+      </div>
+      <iframe id="map-frame" src="${mapEmbedUrl}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      ${pinsHTML ? `<div class="map-pins">${pinsHTML}</div>` : ''}
+    </div>
+  `;
+}
+
+function focusMapPin(encodedPlace) {
+  const frame = document.getElementById('map-frame');
+  if (frame) {
+    frame.src = `https://maps.google.com/maps?q=${encodedPlace}&output=embed&z=16`;
+  }
+}
+</script>
+</body>
+</html>
